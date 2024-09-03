@@ -1,5 +1,5 @@
 const time = document.getElementById('pomodoro-time');
-let timeArray = time.textContent.split(':');
+const timeArray = time.textContent.split(':');
 const btnStart = document.getElementById('start');
 const breakBtn = document.getElementById('break');
 const pomodoroBtn = document.getElementById('pomodoro');
@@ -9,14 +9,13 @@ let minutes = +timeArray[0];
 let seconds = +timeArray[1];
 let timerId;
 
+let isRunning = false;
 
 breakBtn.addEventListener('click', function() {
-    time.textContent = `05:00`;
+    time.textContent = '05:00';
     breakBtn.classList.add('active');
     pomodoroBtn.classList.remove('active');
-    minutes = +timeArray[0];
-    seconds = +timeArray[1];
-
+    minutes = "5";
 });
 
 pomodoroBtn.addEventListener('click', function() {
@@ -35,7 +34,10 @@ function format(val) {
 }
 
 function startTimer() {
-
+    if (isRunning) {
+        stopTimer();
+        return;
+    }
     timerId = setInterval(() => {
 
         if (seconds > 0) {
@@ -55,36 +57,32 @@ function startTimer() {
                 time.textContent = `25:00`;
             } else {
                 time.textContent = `05:00`;
+                minutes = "5";
             }
             btnStart.innerHTML = 'start';
-            btnStart.addEventListener('click', startTimer);
         }
     }, 1)
 
-    this.removeEventListener('click', startTimer);
-    this.addEventListener('click', stopTimer);
-
     this.innerHTML = 'stop';
+    isRunning = true;
 }
 
 function stopTimer() {
+    isRunning = false;
+    btnStart.innerHTML = 'start';
     clearInterval(timerId);
-
-    this.removeEventListener('click', stopTimer);
-    this.addEventListener('click', startTimer);
-
-    this.innerHTML = 'start';
 }
 
 btnStart.addEventListener('click', startTimer)
 
 resetBtn.addEventListener('click', function() {
-    clearInterval(timerId);
+    stopTimer()
     if (pomodoroBtn.classList.contains('active')) {
         time.textContent = `25:00`;
+        minutes = +timeArray[0];
     } else {
         time.textContent = `05:00`;
+        minutes = "5";
     }
-    minutes = +timeArray[0];
     seconds = +timeArray[1];
 })
